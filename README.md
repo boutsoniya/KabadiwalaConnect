@@ -2,6 +2,15 @@
 
 A digital bridge between households, informal waste collectors (kabadiwalas), aggregators, and formal recyclers.
 
+## 🚀 Live Deployment
+
+- **Live API:** https://kabadiwala-connect-api.onrender.com
+- **Swagger API Docs:** https://kabadiwala-connect-api.onrender.com/docs
+- **Health Check:** https://kabadiwala-connect-api.onrender.com/health
+- **GitHub:** https://github.com/boutsoniya/KabadiwalaConnect
+
+> The Render deployment is connected to the `main` branch, so future pushes automatically trigger a new deployment.
+
 ## Problem
 Informal collectors are a critical part of India's recycling ecosystem, but collection requests, pricing, verification, weighing, payments, and downstream traceability are often fragmented.
 
@@ -20,7 +29,7 @@ Informal collectors are a critical part of India's recycling ecosystem, but coll
 ## Architecture
 ```text
 Citizen Web App ──┐
-                  ├── FastAPI ── Database
+                  ├── FastAPI ── PostgreSQL
 Collector App ────┤       │
 Recycler Portal ──┘       ├── Pricing / Matching services
                           └── Notifications / audit trail
@@ -41,7 +50,25 @@ uvicorn app.main:app --reload
 Open `http://127.0.0.1:8000/docs` for Swagger API documentation.
 
 ### Frontend
-Open `frontend/index.html` with a local static server, or use any frontend dev server. Set `API_BASE_URL` in `frontend/app.js` if the API is not on localhost:8000.
+Open `frontend/index.html` with a local static server, or use any frontend dev server. The deployed frontend JavaScript is configured to use the live Render API by default.
+
+## API endpoints
+- `GET /health` — service health
+- `POST /api/auth/register` — register a user
+- `POST /api/auth/login` — authenticate a user
+- `POST /api/users` — create a user
+- `GET /api/users` — list users
+- `POST /api/pickups` — create a pickup request
+- `GET /api/pickups` — list pickup requests
+- `GET /api/pickups/{id}/matches` — find nearby verified collectors
+- `PATCH /api/pickups/{id}/assign/{collector_id}` — assign collector
+- `PATCH /api/pickups/{id}/status` — update pickup status
+- `POST /api/pickups/{id}/weigh` — record verified weight and transaction
+- `GET /api/transactions` — list transactions
+- `POST /api/pickups/{id}/handoffs` — record recycler handoff
+- `GET /api/handoffs` — list recycler handoffs
+- `POST /api/quotes` — calculate material value estimate
+- `GET /api/impact` — view recycling impact metrics
 
 ## Project structure
 ```text
