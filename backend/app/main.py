@@ -1,10 +1,12 @@
 from datetime import datetime
 from enum import Enum
 from math import asin, cos, radians, sin, sqrt
+from pathlib import Path
 from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel, Field
 from sqlalchemy import select
@@ -12,14 +14,15 @@ from sqlalchemy.orm import Session
 
 from .auth import create_access_token, decode_access_token, hash_password, verify_password
 from .database import Base, engine, get_db
-from .models import MaterialPrice, Pickup as PickupModel, RecyclerHandoff, Transaction, User as UserModel
+from .models import Pickup as PickupModel, RecyclerHandoff, Transaction, User as UserModel
 
 Base.metadata.create_all(bind=engine)
-app = FastAPI(title="Kabadiwala Connect API", version="0.3.0")
+app = FastAPI(title="Kabadiwala Connect API", version="0.4.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=False, allow_methods=["*"], allow_headers=["*"])
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
+
 PRICES = {"paper": 12.0, "plastic": 20.0, "cardboard": 10.0, "metal": 35.0, "glass": 8.0, "ewaste": 70.0}
+FRONTEND_DIR = Path(__file__).resolve().parents[2] / "frontend"
 
 class Role(str, Enum):
     citizen = "citizen"
@@ -106,8 +109,7 @@ def current_user(token: Optional[str], db: Session) -> Optional[UserModel]:
         return None
     try:
         data = decode_access_token(token)
-        user_id = int(data["sub"])
-        return db.get(UserModel, user_id)
+        return db.get(UserModel, int(data["sub"]))
     except (ValueError, KeyError, TypeError):
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
@@ -117,30 +119,37 @@ def require_role(token: Optional[str], db: Session, roles: set[str]) -> UserMode
         raise HTTPException(status_code=403, detail="Insufficient permissions")
     return user
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 def root():
+    index = FRONTEND_DIR / "index.html"
+    if index.exists():
+        return FileResponse(index)
     return {"name": "Kabadiwala Connect API", "version": app.version}
 
 @app.get("/health")
 def health():
     return {"status": "healthy", "database": "connected"}
 
+@app.get("/app.js", include_in_schema=False)
+def frontend_js():
+    return FileResponse(FRONTEND_DIR / "app.js")
+
+@app.get("/styles.css", include_in_schema=False)
+def frontend_css():
+    return FileResponse(FRONTEND_DIR / "styles.css")
+
 @app.post("/api/auth/register")
 def register(payload: AuthRegister, db: Session = Depends(get_db)):
     if db.scalar(select(UserModel).where(UserModel.phone == payload.phone)):
         raise HTTPException(status_code=409, detail="Phone number already registered")
-    u = UserModel(name=payload.name, phone=payload.phone, role=payload.role.value, verified=payload.role == Role.citizen, lat=payload.lat, lon=payload.lon, service_radius_km=payload.service_radius_km)
-    u.password_hash = hash_password(payload.password) if hasattr(u, "password_hash") else None
-    db.add(u)
-    db.commit(); db.refresh(u)
-    token = create_access_token(str(u.id), u.role)
-    return {"access_token": token, "token_type": "bearer", "user": user_out(u)}
+    u = UserModel(name=payload.name, phone=payload.phone, role=payload.role.value, verified=payload.role == Role.citizen, lat=payload.lat, lon=payload.lon, service_radius_km=payload.service_radius_km, password_hash=hash_password(payload.password))
+    db.add(u); db.commit(); db.refresh(u)
+    return {"access_token": create_access_token(str(u.id), u.role), "token_type": "bearer", "user": user_out(u)}
 
 @app.post("/api/auth/login")
 def login(payload: AuthLogin, db: Session = Depends(get_db)):
     u = db.scalar(select(UserModel).where(UserModel.phone == payload.phone))
-    password_hash = getattr(u, "password_hash", None) if u else None
-    if not u or not password_hash or not verify_password(payload.password, password_hash):
+    if not u or not u.password_hash or not verify_password(payload.password, u.password_hash):
         raise HTTPException(status_code=401, detail="Invalid phone or password")
     return {"access_token": create_access_token(str(u.id), u.role), "token_type": "bearer", "user": user_out(u)}
 
@@ -212,7 +221,7 @@ def record_weight(pickup_id: int, payload: WeightRecord, db: Session = Depends(g
     db.commit(); db.refresh(p); return pickup_out(p)
 
 @app.get("/api/transactions")
-def list_transactions(db: Session = Depends(get_db)):
+def list_transactions(db:Session=Depends(get_db)):
     return [{"id":t.id,"pickup_id":t.pickup_id,"weight_kg":t.weight_kg,"rate_per_kg":t.rate_per_kg,"amount_inr":t.amount_inr,"payment_method":t.payment_method,"status":t.status,"recorded_at":t.recorded_at} for t in db.scalars(select(Transaction)).all()]
 
 @app.post("/api/pickups/{pickup_id}/handoffs")
