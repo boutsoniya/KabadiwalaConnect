@@ -1,1 +1,67 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kabadiwala Connect</title><link rel="stylesheet" href="styles.css"></head><body><header><div class="wrap nav"><strong>♻️ Kabadiwala Connect</strong><a href="#request">Request Pickup</a><a href="#impact">Impact</a><a href="#flow">How it works</a></div></header><main><section class="hero wrap"><div><span class="pill">SIH26229 · Clean & Green</span><h1>Turn scrap into value.</h1><p>Connect households with verified local collectors and move recyclable material into the formal recycling chain.</p><a class="button" href="#request">Book a pickup</a></div><div class="hero-card"><div>♻️</div><b>Transparent recycling</b><span>Request → Collect → Weigh → Pay → Recycle</span></div></section><section id="impact" class="wrap panel"><h2>Live impact</h2><div class="cards impact-grid"><article><b id="totalPickups">—</b><p>Total pickups</p></article><article><b id="completedPickups">—</b><p>Completed pickups</p></article><article><b id="recycledKg">—</b><p>Recycled kg</p></article><article><b id="valueInr">—</b><p>Value paid (₹)</p></article></div></section><section id="flow" class="wrap cards"><article><b>1. Request</b><p>Choose material and approximate quantity.</p></article><article><b>2. Collect</b><p>A collector accepts and completes the pickup.</p></article><article><b>3. Recycle</b><p>Record payment and downstream handoff.</p></article></section><section id="request" class="wrap panel"><h2>Request a pickup</h2><form id="pickupForm"><label>Name<input id="name" required placeholder="Your name"></label><label>Phone<input id="phone" required placeholder="10-digit phone"></label><label>Material<select id="material"><option>paper</option><option>plastic</option><option>cardboard</option><option>metal</option><option>glass</option><option>ewaste</option></select></label><label>Estimated weight (kg)<input id="weight" type="number" min="0.1" step="0.1" value="5" required></label><label>Address<textarea id="address" required placeholder="Pickup address"></textarea></label><button class="button" type="submit">Submit request</button></form><p id="result" class="result"></p></section></main><footer><div class="wrap">Kabadiwala Connect · SIH26229 · MVP</div></footer><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#071b13"><meta name="description" content="Kabadiwala Connect — intelligent informal recycling network">
+  <title>Kabadiwala Connect — Circular City Network</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">K</div><div><strong>Kabadiwala</strong><span>CONNECT</span></div></div>
+      <div class="mode-card"><span class="live-dot"></span><div><b>Network online</b><small>Local circular economy</small></div></div>
+      <nav>
+        <a class="active" href="#dashboard"><span>⌂</span>Overview</a>
+        <a href="#request"><span>＋</span>Book pickup</a>
+        <a href="#track"><span>◎</span>Track journey</a>
+        <a href="#rates"><span>₹</span>Smart rates</a>
+        <a href="#impact"><span>↗</span>Impact</a>
+      </nav>
+      <div class="sidebar-bottom"><div class="trust"><span>✓</span><div><b>Verified network</b><small>Collectors • Recyclers</small></div></div><small class="ps">SIH26229 · Clean & Green</small></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar"><div><p class="eyebrow">CIRCULAR CITY OS</p><h1 id="pageTitle">Good waste deserves a better journey.</h1></div><div class="top-actions"><button class="icon-btn" onclick="scrollToId('impact')" title="Impact">↗</button><button class="profile"><span>SO</span><div><b>Citizen</b><small>Demo workspace</small></div></button></div></header>
+
+      <section id="dashboard" class="hero-grid">
+        <div class="hero-card">
+          <div class="hero-copy"><span class="badge">♻ INTELLIGENT RECYCLING NETWORK</span><h2>From doorstep scrap<br><em>to verified recycling.</em></h2><p>Kabadiwala Connect formalizes the last-mile recycling chain — matching citizens with collectors, making prices transparent, recording weights and proving downstream impact.</p><div class="hero-actions"><button class="primary" onclick="scrollToId('request')">Book a pickup <span>→</span></button><button class="ghost" onclick="scrollToId('track')">See the journey</button></div></div>
+          <div class="orbit"><div class="orbit-ring r1"></div><div class="orbit-ring r2"></div><div class="orbit-center">♻</div><div class="node n1">HOME</div><div class="node n2">COLLECT</div><div class="node n3">RECYCLE</div><div class="node n4">IMPACT</div></div>
+        </div>
+        <div class="stat-stack">
+          <div class="mini-stat"><span class="stat-icon green">♻</span><div><small>DIVERTED TODAY</small><strong id="heroKg">— kg</strong></div><span class="trend">LIVE</span></div>
+          <div class="mini-stat"><span class="stat-icon amber">₹</span><div><small>VALUE RETURNED</small><strong id="heroValue">₹—</strong></div><span class="trend">FAIR</span></div>
+          <div class="mini-stat"><span class="stat-icon blue">◎</span><div><small>NETWORK NODES</small><strong id="heroNodes">—</strong></div><span class="trend">ACTIVE</span></div>
+          <div class="mini-stat callout"><div><small>WHY IT MATTERS</small><strong>Informal collectors are the missing link.</strong><p>We give them visibility, trust and a digital trail.</p></div><span class="arrow">↗</span></div>
+        </div>
+      </section>
+
+      <section class="section-head" id="request"><div><p class="eyebrow">01 · PICKUP</p><h2>Turn your scrap into a pickup.</h2></div><span class="section-note">Usually takes under 60 seconds</span></section>
+      <section class="workspace pickup-workspace">
+        <div class="material-panel"><div class="panel-top"><div><h3>What are we collecting?</h3><p>Select a material to see the transparent rate.</p></div><span class="secure">✓ No hidden fees</span></div><div class="material-grid" id="materialGrid">
+          <button class="material active" data-material="paper"><span>▤</span><b>Paper</b><small>₹12/kg</small></button><button class="material" data-material="plastic"><span>◇</span><b>Plastic</b><small>₹20/kg</small></button><button class="material" data-material="cardboard"><span>▧</span><b>Cardboard</b><small>₹10/kg</small></button><button class="material" data-material="metal"><span>⬡</span><b>Metal</b><small>₹35/kg</small></button><button class="material" data-material="glass"><span>◈</span><b>Glass</b><small>₹8/kg</small></button><button class="material" data-material="ewaste"><span>⌁</span><b>E-waste</b><small>₹70/kg</small></button>
+        </div></div>
+        <div class="quote-panel"><p class="eyebrow">LIVE ESTIMATE</p><div class="quote-price" id="quotePrice">₹60</div><div class="range-wrap"><div class="range-label"><span>Estimated weight</span><b><span id="weightValue">5</span> kg</b></div><input id="weight" type="range" min="1" max="100" value="5"><div class="range-scale"><span>1 kg</span><span>100 kg</span></div></div><div class="quote-line"><span>Paper · ₹12/kg</span><b id="rateText">₹12/kg</b></div><button class="primary full" onclick="scrollToId('pickupFormCard')">Continue <span>→</span></button></div>
+      </section>
+
+      <section class="form-section" id="pickupFormCard"><div class="form-intro"><p class="eyebrow">02 · DETAILS</p><h2>We'll handle the rest.</h2><p>Give us the essentials. Your request enters the live collection queue immediately.</p><div class="process"><div class="done">✓</div><span></span><div>2</div><span></span><div>3</div><small>Request</small><small>Collect</small><small>Recycle</small></div></div>
+        <form id="pickupForm" class="pickup-form"><div class="field-row"><label>Full name<input id="name" required placeholder="e.g. Soniya Sharma"></label><label>Phone number<input id="phone" required inputmode="tel" placeholder="10-digit mobile"></label></div><label>Pickup address<textarea id="address" required placeholder="House / street / landmark"></textarea></label><div class="field-row"><label>Preferred slot<select id="slot"><option>Today · 4–6 PM</option><option>Today · 6–8 PM</option><option>Tomorrow · 9–11 AM</option><option>Tomorrow · 4–6 PM</option></select></label><div class="location-box"><span>◎</span><div><b>Smart matching</b><small>We'll route this to a nearby collector.</small></div></div></div><button class="primary full" type="submit" id="submitBtn">Request pickup <span>→</span></button><p id="result" class="result"></p></form>
+      </section>
+
+      <section class="section-head" id="track"><div><p class="eyebrow">03 · TRACEABILITY</p><h2>Every kilogram gets a story.</h2></div><span class="section-note">A digital chain of custody</span></section>
+      <section class="timeline-card"><div class="journey"><div class="journey-line"></div><div class="journey-step current"><span>1</span><div><b>Household request</b><small>Pickup is logged with material + estimated value</small></div></div><div class="journey-step"><span>2</span><div><b>Collector matched</b><small>Nearest verified collector gets the job</small></div></div><div class="journey-step"><span>3</span><div><b>Weighed & paid</b><small>Actual weight locks the final payout</small></div></div><div class="journey-step"><span>4</span><div><b>Recycler handoff</b><small>Material enters the formal recycling chain</small></div></div></div><div class="proof-card"><span class="proof-mark">✓</span><p class="eyebrow">DESIGNED FOR TRUST</p><h3>Transparent by default.</h3><p>Estimated value before pickup. Actual value after weighing. Downstream handoff recorded.</p><div class="proof-tags"><span>Fair price</span><span>Verified actors</span><span>Traceable</span></div></div></section>
+
+      <section class="section-head" id="rates"><div><p class="eyebrow">04 · SMART RATES</p><h2>Know what your scrap is worth.</h2></div><span class="section-note">Demo market rates</span></section>
+      <section class="rates-grid"><div class="rate-chart"><div class="chart-head"><div><h3>Material value index</h3><p>Indicative payout per kilogram</p></div><span>₹ / KG</span></div><div class="bars"><div><span>Paper</span><i style="--w:34%"></i><b>₹12</b></div><div><span>Plastic</span><i style="--w:57%"></i><b>₹20</b></div><div><span>Cardboard</span><i style="--w:29%"></i><b>₹10</b></div><div><span>Metal</span><i style="--w:100%"></i><b>₹35</b></div><div><span>Glass</span><i style="--w:23%"></i><b>₹8</b></div><div><span>E-waste</span><i style="--w:100%"></i><b>₹70*</b></div></div><small class="chart-foot">* E-waste rate is a prototype reference and can vary by category.</small></div><div class="rate-insight"><span class="spark">↗</span><p class="eyebrow">THE OPPORTUNITY</p><strong>Make the invisible network visible.</strong><p>Citizens get convenience. Collectors get predictable demand. Recyclers get cleaner, traceable supply.</p></div></section>
+
+      <section class="section-head" id="impact"><div><p class="eyebrow">05 · IMPACT ENGINE</p><h2>Proof, not promises.</h2></div><span class="section-note">Live data from your network</span></section>
+      <section class="impact-dashboard"><div class="impact-main"><div class="impact-number"><small>TOTAL MATERIAL DIVERTED</small><strong id="impactKg">0</strong><span>kilograms</span></div><div class="impact-metrics"><div><small>PICKUPS</small><b id="totalPickups">0</b></div><div><small>COMPLETED</small><b id="completedPickups">0</b></div><div><small>VALUE RETURNED</small><b id="valueInr">₹0</b></div><div><small>COLLECTORS</small><b id="collectors">0</b></div></div></div><div class="material-breakdown"><p class="eyebrow">MATERIAL MIX</p><div id="breakdownBars"><div class="empty-breakdown">Complete a pickup to start your impact trail.</div></div></div></section>
+
+      <footer><div><strong>Kabadiwala Connect</strong><span>Formalizing the informal recycling chain.</span></div><div><span>SIH26229</span><span>Clean & Green Technology</span></div></footer>
+    </main>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
