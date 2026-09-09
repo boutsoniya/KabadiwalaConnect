@@ -1,56 +1,12 @@
 const API_BASE_URL = window.API_BASE_URL || '';
-const form = document.querySelector('#pickupForm');
-const result = document.querySelector('#result');
-
-async function loadImpact() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/impact`);
-    if (!response.ok) return;
-    const data = await response.json();
-    document.querySelector('#totalPickups').textContent = data.total_pickups;
-    document.querySelector('#completedPickups').textContent = data.completed_pickups;
-    document.querySelector('#recycledKg').textContent = `${data.total_recycled_kg} kg`;
-    document.querySelector('#valueInr').textContent = `₹${data.total_value_inr}`;
-  } catch (_) {
-    // Keep the dashboard usable if the API is temporarily sleeping on free hosting.
-  }
-}
-
-form.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  result.textContent = 'Submitting…';
-  try {
-    const userResponse = await fetch(`${API_BASE_URL}/api/users`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        name: document.querySelector('#name').value,
-        phone: document.querySelector('#phone').value,
-        role: 'citizen'
-      })
-    });
-    const user = await userResponse.json();
-    if (!userResponse.ok || !user.id) throw new Error(user.detail || 'Could not create user');
-
-    const pickupResponse = await fetch(`${API_BASE_URL}/api/pickups`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        citizen_id: user.id,
-        material: document.querySelector('#material').value,
-        estimated_weight_kg: Number(document.querySelector('#weight').value),
-        address: document.querySelector('#address').value
-      })
-    });
-    const pickup = await pickupResponse.json();
-    if (!pickupResponse.ok || !pickup.id) throw new Error(pickup.detail || 'Could not create pickup');
-
-    result.textContent = `Pickup #${pickup.id} created successfully. Status: ${pickup.status}.`;
-    form.reset();
-    loadImpact();
-  } catch (error) {
-    result.textContent = `Error: ${error.message}. Please try again in a moment.`;
-  }
-});
-
-loadImpact();
+const PRICES = {paper:12, plastic:20, cardboard:10, metal:35, glass:8, ewaste:70};
+let selectedMaterial = 'paper';
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+function scrollToId(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start');} window.scrollToId=scrollToId;
+function updateQuote(){const w=Number($('#weight')?.value||5),r=PRICES[selectedMaterial];$('#weightValue').textContent=w;$('#quotePrice').textContent=`₹${Math.round(w*r).toLocaleString('en-IN')}`;$('#rateText').textContent=`₹${r}/kg`;const n={paper:'Paper',plastic:'Plastic',cardboard:'Cardboard',metal:'Metal',glass:'Glass',ewaste:'E-waste'};document.querySelector('.quote-line span').textContent=`${n[selectedMaterial]} · ₹${r}/kg`;}
+$$('.material').forEach(b=>b.addEventListener('click',()=>{$$('.material').forEach(x=>x.classList.remove('active'));b.classList.add('active');selectedMaterial=b.dataset.material;updateQuote();}));
+$('#weight')?.addEventListener('input',updateQuote);
+function showToast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+async function loadImpact(){try{const r=await fetch(`${API_BASE_URL}/api/impact`);if(!r.ok)return;const d=await r.json(),kg=Number(d.total_recycled_kg||0),v=Number(d.total_value_inr||0);$('#heroKg').textContent=`${kg.toLocaleString('en-IN')} kg`,$('#heroValue').textContent=`₹${v.toLocaleString('en-IN')}`,$('#heroNodes').textContent=Number(d.registered_collectors||0)+Number(d.registered_recyclers||0),$('#impactKg').textContent=kg.toLocaleString('en-IN'),$('#totalPickups').textContent=d.total_pickups||0,$('#completedPickups').textContent=d.completed_pickups||0,$('#valueInr').textContent=`₹${v.toLocaleString('en-IN')}`,$('#collectors').textContent=d.registered_collectors||0;const box=$('#breakdownBars'),mix=d.material_breakdown_kg||{},e=Object.entries(mix);if(e.length){const max=Math.max(...e.map(x=>Number(x[1])),1);box.innerHTML=e.map(([n,val])=>`<div class="break-row"><span>${n}</span><i style="width:${Math.max(5,Number(val)/max*100)}%"></i><b>${val} kg</b></div>`).join('');}}catch(_){} }
+$('#pickupForm')?.addEventListener('submit',async e=>{e.preventDefault();const b=$('#submitBtn'),res=$('#result');b.disabled=true;b.innerHTML='Creating your pickup…';res.textContent='';try{const ur=await fetch(`${API_BASE_URL}/api/users`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:$('#name').value,phone:$('#phone').value,role:'citizen'})}),u=await ur.json();if(!ur.ok||!u.id)throw new Error(u.detail||'Could not create citizen');const pr=await fetch(`${API_BASE_URL}/api/pickups`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({citizen_id:u.id,material:selectedMaterial,estimated_weight_kg:Number($('#weight').value),address:$('#address').value})}),p=await pr.json();if(!pr.ok||!p.id)throw new Error(p.detail||'Could not create pickup');res.textContent=`Pickup #${p.id} is in the network queue · estimated value ₹${p.estimated_value}`;showToast(`Pickup #${p.id} created successfully`);b.innerHTML='Pickup requested ✓';loadImpact();setTimeout(()=>scrollToId('track'),700);}catch(x){res.textContent=`Could not create pickup: ${x.message}`;b.innerHTML='Try again →';}finally{b.disabled=false;}});
+updateQuote();loadImpact();
