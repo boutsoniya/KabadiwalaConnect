@@ -2,7 +2,7 @@ const API_BASE_URL = window.API_BASE_URL || '';
 const PRICES = {paper:12, plastic:20, cardboard:10, metal:35, glass:8, ewaste:70};
 let selectedMaterial = 'paper';
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-function scrollToId(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start');} window.scrollToId=scrollToId;
+function scrollToId(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});} window.scrollToId=scrollToId;
 function updateQuote(){const w=Number($('#weight')?.value||5),r=PRICES[selectedMaterial];$('#weightValue').textContent=w;$('#quotePrice').textContent=`₹${Math.round(w*r).toLocaleString('en-IN')}`;$('#rateText').textContent=`₹${r}/kg`;const n={paper:'Paper',plastic:'Plastic',cardboard:'Cardboard',metal:'Metal',glass:'Glass',ewaste:'E-waste'};document.querySelector('.quote-line span').textContent=`${n[selectedMaterial]} · ₹${r}/kg`;}
 $$('.material').forEach(b=>b.addEventListener('click',()=>{$$('.material').forEach(x=>x.classList.remove('active'));b.classList.add('active');selectedMaterial=b.dataset.material;updateQuote();}));
 $('#weight')?.addEventListener('input',updateQuote);
