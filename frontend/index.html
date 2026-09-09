@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kabadiwala Connect</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header><div class="wrap nav"><strong>♻️ Kabadiwala Connect</strong><a href="#request">Request Pickup</a><a href="#flow">How it works</a></div></header>
+  <main>
+    <section class="hero wrap"><div><span class="pill">Clean & Green Technology</span><h1>Turn scrap into value.</h1><p>Connect households with verified local waste collectors and move recyclable material into the formal recycling chain.</p><a class="button" href="#request">Book a pickup</a></div><div class="hero-card"><div>♻️</div><b>Transparent recycling</b><span>Pickup → Weigh → Pay → Recycle</span></div></section>
+    <section id="flow" class="wrap cards"><article><b>1. Request</b><p>Choose your material and approximate quantity.</p></article><article><b>2. Collect</b><p>A collector accepts and completes the pickup.</p></article><article><b>3. Recycle</b><p>Record the transaction and downstream handoff.</p></article></section>
+    <section id="request" class="wrap panel"><h2>Request a pickup</h2><form id="pickupForm"><label>Name<input id="name" required placeholder="Your name"></label><label>Phone<input id="phone" required placeholder="10-digit phone"></label><label>Material<select id="material"><option>paper</option><option>plastic</option><option>cardboard</option><option>metal</option><option>glass</option><option>ewaste</option></select></label><label>Estimated weight (kg)<input id="weight" type="number" min="0.1" step="0.1" value="5" required></label><label>Address<textarea id="address" required placeholder="Pickup address"></textarea></label><button class="button" type="submit">Submit request</button></form><p id="result" class="result"></p></section>
+  </main>
+  <footer><div class="wrap">Kabadiwala Connect · SIH26229 · MVP</div></footer>
+  <script src="app.js"></script>
+</body>
+</html>
