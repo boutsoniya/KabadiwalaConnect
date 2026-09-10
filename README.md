@@ -4,7 +4,7 @@ A digital bridge between households, informal waste collectors (kabadiwalas), ag
 
 ## 🚀 Live Deployment
 
-- **Live API:** https://kabadiwala-connect-api.onrender.com
+- **Live Demo:** https://kabadiwala-connect-djlz.onrender.com
 - **Swagger API Docs:** https://kabadiwala-connect-api.onrender.com/docs
 - **Health Check:** https://kabadiwala-connect-api.onrender.com/health
 - **GitHub:** https://github.com/boutsoniya/KabadiwalaConnect
